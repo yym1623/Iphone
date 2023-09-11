@@ -5,15 +5,15 @@ import { useQuasar } from 'quasar'
 const $q = useQuasar();
 
 const imgList = ref([
-  { imgSrc: ('src/assets/iphone/kakao.png') },
-  { imgSrc: ('src/assets/iphone/appstore.png') },
+  { imgSrc: ('src/assets/kakao.png') },
+  { imgSrc: ('src/assets/appstore.png') },
 ])
 
 const bannerImgList = ref([
-  { imgSrc: ('src/assets/iphone/call.png') },
-  { imgSrc: ('src/assets/iphone/message.png') },
-  { imgSrc: ('src/assets/iphone/kamera.png') },
-  { imgSrc: ('src/assets/iphone/setting.png') },
+  { imgSrc: ('src/assets/call.png') },
+  { imgSrc: ('src/assets/message.png') },
+  { imgSrc: ('src/assets/kamera.png') },
+  { imgSrc: ('src/assets/setting.png') },
 ])
 
 
@@ -72,7 +72,7 @@ setInterval(() => {
         </div>
       </div>
       <!-- bottom -->
-      <div class="q-pa-md absolute-bottom">
+      <div class="q-pa-md absolute-bottom bottom">
         <div class="banner shadow-5 q-pa-md row justify-between">
           <q-img :src="img.imgSrc" v-for="img in bannerImgList" :key="img"/>
         </div>
@@ -98,9 +98,10 @@ $dark-color: #1d0c0c;
 .container {
   width: 100%;
   max-width: 400px;
+  margin: auto;
   .bg {
     height: 100vh;
-    background-image: url('../assets/iphone_default_bg.webp');
+    background-image: url('src/assets/iphone_default_bg.webp');
     background-position: center;
     background-size: 100%;
   }
@@ -131,12 +132,17 @@ $dark-color: #1d0c0c;
     }
   }
 
-  .banner {
-    border-radius: 10px;
-    div {
+  .bottom {
+    width: 100%;
+    max-width: 400px;
+    margin: auto;
+    .banner {
       border-radius: 10px;
-      width: 64px;
-      height: 64px;
+      div {
+        border-radius: 10px;
+        width: 64px;
+        height: 64px;
+      }
     }
   }
   
