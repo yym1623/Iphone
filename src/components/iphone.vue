@@ -4,16 +4,28 @@ import { useQuasar } from 'quasar'
 
 const $q = useQuasar();
 
+const imgList = ref([
+  { imgSrc: ('src/assets/iphone/kakao.png') },
+  { imgSrc: ('src/assets/iphone/appstore.png') },
+])
+
+const bannerImgList = ref([
+  { imgSrc: ('src/assets/iphone/call.png') },
+  { imgSrc: ('src/assets/iphone/message.png') },
+  { imgSrc: ('src/assets/iphone/kamera.png') },
+  { imgSrc: ('src/assets/iphone/setting.png') },
+])
+
 
 let today = new Date()
 let hours = today.getHours();
 let minutes = today.getMinutes();
 
 // 삼항이나 계산 같은거 할때 ()로 구분좌가 없으면 어디까지가 계산인지 잘 안먹혀서 의도하지 않는게 나올때가 있다 ()로 구분해 주기
-let todayDate = (hours.toString().length === 1 ? '0' + hours : hours) + ':' + (minutes.toString().length === 1 ? '0' + minutes : minutes);
+let todayDate = ref((hours.toString().length === 1 ? '0' + hours : hours) + ':' + (minutes.toString().length === 1 ? '0' + minutes : minutes));
 
 setInterval(() => {
-  todayDate
+  todayDate.value
 }, 60000);
 
 
@@ -29,13 +41,13 @@ setInterval(() => {
 </script>
 <template>
   <!-- mobile -->
-  <div v-if="$q.platform.is.mobile">
+  <div class="container">
     <div class="bg">
       <!-- top -->
-      <q-bar style="height: 25px" class="row justify-evenly">
-        <div>
-          <div>{{ todayDate }}</div>
-        </div>
+      <div style="height: 25px" class="header row justify-around items-center">
+        <!-- <div> -->
+          <div class="date q-ml-lg">{{ todayDate }}</div>
+        <!-- </div> -->
         <div class="row items-center camera">
           <div></div>
           <div></div>
@@ -43,25 +55,26 @@ setInterval(() => {
           <div></div>
           <div></div>
         </div>
-        <div>
+        <div class="q-mr-md">
           <q-btn dense flat icon="signal_cellular_alt" />
           <q-btn dense flat icon="5g" />
           <q-btn dense flat icon="battery_5_bar" />
         </div>
-      </q-bar>
+      </div>
       <!-- main -->
       <div class="q-pa-md">
-        <div class="q-pa-sm grid" >
-          <q-btn padding="xl" color="white" v-for="btn in 24" :key="btn"  />
+        <div class="q-ml-md q-mt-md grid" >
+          <q-img
+            v-for="img in imgList" :key="img"
+            :src="img.imgSrc"
+            spinner-color="white"
+          />
         </div>
       </div>
       <!-- bottom -->
       <div class="q-pa-md absolute-bottom">
         <div class="banner shadow-5 q-pa-md row justify-between">
-          <q-btn padding="xl" color="gray" />
-          <q-btn padding="xl" color="gray" />
-          <q-btn padding="xl" color="gray" />
-          <q-btn padding="xl" color="gray" />
+          <q-img :src="img.imgSrc" v-for="img in bannerImgList" :key="img"/>
         </div>
       </div>
     </div>
@@ -82,38 +95,51 @@ $dark-color: #1d0c0c;
 // .body--dark {
 
 // }
+.container {
+  width: 100%;
+  max-width: 400px;
+  .bg {
+    height: 100vh;
+    background-image: url('../assets/iphone_default_bg.webp');
+    background-position: center;
+    background-size: 100%;
+  }
 
-.bg {
-  // width: 100%;
-  height: 100vh;
-  background-image: url('../assets/iphone_default_bg.webp');
-  background-position: center;
-  background-size: 100%;
-}
+  .header {
+    .date {
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .camera {
+      width: 180px;
+      height: 30px;
+      background: #000;
+      border-radius: 0 0 20px 20px;
+      margin-left: 20px;
+    }
+  }
+  
+  .grid {
+    display :grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 10px;
+    div {
+      border-radius: 10px;
+      width: 64px;
+      height: 64px;
+      
+    }
+  }
 
-.banner {
-  border-radius: 10px;
-}
-
-.grid {
-  display :grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-gap: 15px;
-  button {
+  .banner {
     border-radius: 10px;
+    div {
+      border-radius: 10px;
+      width: 64px;
+      height: 64px;
+    }
   }
-}
-
-.camera {
-  align-self: center;
-  width: 200px;
-  height: 25px;
-  background: #000;
-  border-radius: 0 0 20px 20px;
-  margin-left: 30px;
-  .mike {
-
-  }
+  
 }
 
 </style>
