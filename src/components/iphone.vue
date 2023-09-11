@@ -10,12 +10,15 @@ const $q = useQuasar();
 
 const modules = ref([ ])
 
+const mode = ref(false);
+
 const imgList = [
   { imgSrc: ('/assets/call.png') },
   { imgSrc: ('/assets/message.png') },
   { imgSrc: ('/assets/kamera.png') },
   { imgSrc: ('/assets/setting.png') },
 ]
+
 
 let today = new Date(); 
 // let year = today.getFullYear();
@@ -30,13 +33,67 @@ let minutes = today.getMinutes();
 let todayYear = ref((month.toString().length === 1 ? '0' + month : month) + '월' + (day.toString().length === 1 ? '0' + day : day) + '일' + dayOfWeek + '요일'  );
 let todayDate = ref((hours.toString().length === 1 ? '0' + hours : hours) + ':' + (minutes.toString().length === 1 ? '0' + minutes : minutes));
 
+
+
 setInterval(() => {
   todayDate.value
   todayYear.value
 }, 60000);
 
+// 얼굴 인증 test
+import faceIO from '@faceio/fiojs'
 
-// const mode = ref(false);
+const faceio = new faceIO("fioa060f");
+
+
+const enrollNewUser = () => {
+  faceio.enroll({
+        "locale": "auto",
+        "payload": {
+        /* The payload we want to associate with this user
+        * which is forwarded back to us upon future
+        * authentication of this particular user.*/
+        "whoami": 123456,
+        "email": "john.doe@example.com"
+        }
+    }).then(userInfo => {
+        // User Successfully Enrolled!
+        alert(
+            `User Successfully Enrolled! Details:
+            Unique Facial ID: ${userInfo.facialId}
+            Enrollment Date: ${userInfo.timestamp}
+            Gender: ${userInfo.details.gender}
+            Age Approximation: ${userInfo.details.age}`
+        );
+        console.log('1111111111111')
+        console.log(userInfo);
+    }).catch(errCode => {
+      console.log('2222222222222')
+      console.log(errCode)
+    })
+}
+function authenticateUser(){
+    // Authenticate a previously enrolled user
+    faceio.authenticate({
+        "locale": "auto" // Default user locale
+    }).then(userData => {
+        console.log("Success, user identified")
+        // Grab the facial ID linked to this particular user which will be same
+        // for each of his successful future authentication. FACEIO recommend 
+        // that your rely on this Facial ID if you plan to uniquely identify 
+        // all enrolled users on your backend for example.
+        console.log("Linked facial Id: " + userData.facialId)
+        // Grab the arbitrary data you have already linked (if any) to this particular user
+        // during his enrollment via the payload parameter of the enroll() method.
+        console.log("Payload: " + JSON.stringify(userData.payload)) 
+        // {"whoami": 123456, "email": "john.doe@example.com"} set via enroll()
+    }).catch(errCode => {
+        // handle authentication failure. Visit:
+        // https://faceio.net/integration-guide#error-codes
+        // for the list of all possible error codes
+    })
+}
+
 
 // watch(mode, () => {
 //   if($q.dark.isActive === false) {
@@ -80,13 +137,12 @@ setInterval(() => {
         </div>
       </div>
     </div>
-    <swiper class="rightSwiper" :modules="modules" :pagination="{ clickable: true }" @swiper="onSwiper" @slideChange="onSlideChange" direction="vertical"   simulateTouch>
+    <swiper class="rightSwiper" :modules="modules"  direction="vertical" simulateTouch>
       <!-- 내리는 효과 주기 위해서 첫번째 element 생략 -->
-      <swiper-slide class="swiperItem"></swiper-slide>
       <swiper-slide class="swiperItem">
         <div class="bg">
         <!-- top -->
-          <div style="height: 25px" class="relative-position header row justify-around">
+        <div style="height: 25px" class="relative-position header row justify-around">
           <!-- <div> -->
           <div class="date q-ml-lg">{{ todayDate }}</div>
             <!-- </div> -->
@@ -109,8 +165,15 @@ setInterval(() => {
               <div class="text-h2 text-weight-bold">{{ todayDate }}</div>
             </div>
           </div>
+          <div class="bottomData q-mb-lg row absolute-bottom justify-around items-center ">
+            <q-btn  class="bottomItem" icon="flashlight_on" />
+            <q-btn @click="enrollNewUser" class="bottomItem" label="얼굴 인식" />
+            <q-btn class="bottomItem" icon="photo_camera" />
+          </div>
+          <div class="line absolute-bottom"></div>
         </div>
       </swiper-slide>
+      <swiper-slide class="swiperItem"></swiper-slide>
     </swiper>
   </div>
 </template>
@@ -172,6 +235,7 @@ $dark-color: #1d0c0c;
         border-radius: 10px;
         width: 64px;
         height: 64px;
+        cursor: pointer;
       }
     }
   }
@@ -208,6 +272,21 @@ $dark-color: #1d0c0c;
           width: 100%;
           height: 200px;
           color: #fff;
+        }
+        .bottomData {
+          .bottomItem {
+            // width: 50px;
+            height: 45px;
+            border-radius: 50%;
+          }
+        }
+        .line {
+          margin: auto;
+          margin-bottom: 5px;
+          width: 200px;
+          height: 10px;
+          background: #eee;
+          border-radius: 50px;
         }
       }
     }
