@@ -4,17 +4,17 @@ import { useQuasar } from 'quasar'
 
 const $q = useQuasar();
 
-const imgList = ref([
-  { imgSrc: ('/public/kakao.png') },
-  { imgSrc: ('/public/appstore.png') },
-])
+const imgList = [
+  { imgSrc: ('/assets/kakao.png') },
+  { imgSrc: ('/assets/appstore.png') },
+]
 
-const bannerImgList = ref([
-  { imgSrc: ('/public/call.png') },
-  { imgSrc: ('/public/message.png') },
-  { imgSrc: ('/public/kamera.png') },
-  { imgSrc: ('/public/setting.png') },
-])
+const bannerImgList = [
+  { imgSrc: ('/assets/call.png') },
+  { imgSrc: ('/assets/message.png') },
+  { imgSrc: ('/assets/kamera.png') },
+  { imgSrc: ('/assets/setting.png') },
+]
 
 
 let today = new Date()
@@ -96,12 +96,12 @@ $dark-color: #1d0c0c;
 
 // }
 .container {
-  width: 100%;
-  max-width: 400px;
+  position: relative;
+  width: 400px;
   margin: auto;
   .bg {
     height: 100vh;
-    background-image: url('/public/iphone_default_bg.webp');
+    background-image: url('/assets/iphone_default_bg.webp');
     background-position: center;
     background-size: 100%;
   }
@@ -133,9 +133,6 @@ $dark-color: #1d0c0c;
   }
 
   .bottom {
-    width: 100%;
-    max-width: 400px;
-    margin: auto;
     .banner {
       border-radius: 10px;
       div {
@@ -145,7 +142,6 @@ $dark-color: #1d0c0c;
       }
     }
   }
-  
 }
 
 </style>
