@@ -5,15 +5,15 @@ import { useQuasar } from 'quasar'
 const $q = useQuasar();
 
 const imgList = ref([
-  { imgSrc: ('public/kakao.png') },
-  { imgSrc: ('public/appstore.png') },
+  { imgSrc: ('/public/kakao.png') },
+  { imgSrc: ('/public/appstore.png') },
 ])
 
 const bannerImgList = ref([
-  { imgSrc: ('public/call.png') },
-  { imgSrc: ('public/message.png') },
-  { imgSrc: ('public/kamera.png') },
-  { imgSrc: ('public/setting.png') },
+  { imgSrc: ('/public/call.png') },
+  { imgSrc: ('/public/message.png') },
+  { imgSrc: ('/public/kamera.png') },
+  { imgSrc: ('/public/setting.png') },
 ])
 
 
@@ -101,7 +101,7 @@ $dark-color: #1d0c0c;
   margin: auto;
   .bg {
     height: 100vh;
-    background-image: url('public/iphone_default_bg.webp');
+    background-image: url('/public/iphone_default_bg.webp');
     background-position: center;
     background-size: 100%;
   }
