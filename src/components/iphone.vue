@@ -1,22 +1,53 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, defineAsyncComponent } from 'vue'
 import { useQuasar } from 'quasar'
-import { Swiper, SwiperSlide } from 'vue-awesome-swiper' // 색깔은 사용안하고 있다고 해도(setup script에선 따로 컴포넌트 지정안한다) 아래에서 사용하고 있다
-// import swiper module styles
+import faceIO from '@faceio/fiojs'
+import { Swiper, SwiperSlide } from 'vue-awesome-swiper'
+import { onClickOutside } from "@vueuse/core"
+
+const camera = defineAsyncComponent(() => import('./camera.vue'))
+
+const cameraActive = ref(false)
+
+const cameraOpen = () => {
+  console.log('trues')
+  cameraActive.value = true;
+}
+
+
 import 'swiper/css'
 import 'swiper/css/pagination'
 
 const $q = useQuasar();
 
+const itemBox = ref(false);
+const itemBoxActive = ref();
+
+onClickOutside(itemBoxActive, () => {
+  itemBox.value = false
+})
+
+const itemBoxOpen = () => {
+  itemBox.value = true;
+}
+
 const modules = ref([ ])
 
-const mode = ref(false);
-
 const imgList = [
-  { imgSrc: ('/assets/call.png') },
-  { imgSrc: ('/assets/message.png') },
-  { imgSrc: ('/assets/kamera.png') },
+  { imgSrc: ('/assets/photo.png') },
+  { imgSrc: ('/assets/calculator.png') },
   { imgSrc: ('/assets/setting.png') },
+  { imgSrc: ('/assets/files.png') },
+  { imgSrc: ('/assets/calendar.png') },
+  { imgSrc: ('/assets/notes.png') },
+  { imgSrc: ('/assets/app-store.png') },
+]
+
+const bannerImgList = [
+  { imgSrc: ('/assets/phone.png') },
+  { imgSrc: ('/assets/message.png') },
+  { imgSrc: ('/assets/contacts.png') },
+  { imgSrc: ('/assets/camera.png') },
 ]
 
 
@@ -39,36 +70,16 @@ setInterval(() => {
   todayDate.value
   todayYear.value
 }, 60000);
+ 
 
-// 얼굴 인증 test
-import faceIO from '@faceio/fiojs'
-
-const faceio = new faceIO("fioa060f");
-
-
+const faceio = new faceIO("fioacab4");
+// face id 신규 등록
 const enrollNewUser = () => {
   faceio.enroll({
-        "locale": "auto",
-        "payload": {
-        /* The payload we want to associate with this user
-        * which is forwarded back to us upon future
-        * authentication of this particular user.*/
-        "whoami": 123456,
-        "email": "john.doe@example.com"
-        }
     }).then(userInfo => {
-        // User Successfully Enrolled!
-        alert(
-            `User Successfully Enrolled! Details:
-            Unique Facial ID: ${userInfo.facialId}
-            Enrollment Date: ${userInfo.timestamp}
-            Gender: ${userInfo.details.gender}
-            Age Approximation: ${userInfo.details.age}`
-        );
-        console.log('1111111111111')
-        console.log(userInfo);
+      console.log(userInfo)
+      $q.sessionStorage.set('userKey', userInfo.facialId);
     }).catch(errCode => {
-      console.log('2222222222222')
       console.log(errCode)
     })
 }
@@ -105,7 +116,7 @@ function authenticateUser(){
 </script>
 <template>
   <div class="container">
-    <div class="bg">
+    <div class="bg" :class="{ itemBoxs : itemBox }">
       <!-- top -->
       <div style="height: 25px" class="header row justify-around">
         <!-- <div> -->
@@ -115,26 +126,35 @@ function authenticateUser(){
           <div></div>
           <div></div>
           <div class="mike"></div>
-          <div></div>
+          <div></div> 
           <div></div>
         </div>
         <div class="items q-mr-md">
           <q-btn dense flat icon="signal_cellular_alt" />
           <q-btn dense flat icon="5g" />
-          <q-btn dense flat icon="battery_5_bar" />
+          <q-btn dense flat icon="battery_4_bar" />
         </div>
       </div>
       <!-- main -->
-      <div class="q-pa-md">
+      <div class="q-pa-md mainItem">
         <div class="q-ml-md q-mt-md grid" >
-          <q-img src="/assets/kakao.png" />
+          <q-img class="item_f" src="/assets/kakaotalk.png" />
+          <div ref="itemBoxActive" :class="{ itemBoxs : itemBox }" class="itemBox" @click="itemBoxOpen">
+            <template v-if="itemBox">
+              <q-img :src="img.imgSrc" v-for="img in imgList" :key="img" />
+            </template>
+            <template v-else>
+              <q-img :src="img.imgSrc" v-for="img in imgList.slice(0, 4)" :key="img" />
+            </template>
+          </div>
         </div>
       </div>
       <!-- bottom -->
       <div class="q-pa-md absolute-bottom bottom">
         <div class="banner shadow-5 q-pa-md row justify-between">
-          <q-img :src="img.imgSrc" v-for="img in imgList" :key="img"/>
+          <q-img :src="img.imgSrc" v-for="(img, index) in bannerImgList" :key="img" @click="(index === 3  ? cameraOpen() : none)"/>
         </div>
+        <div v-if="cameraActive"><camera /></div>
       </div>
     </div>
     <swiper class="rightSwiper" :modules="modules"  direction="vertical" simulateTouch>
@@ -156,7 +176,7 @@ function authenticateUser(){
             <div class="items q-mr-md">
               <q-btn dense flat icon="signal_cellular_alt" />
               <q-btn dense flat icon="5g" />
-              <q-btn dense flat icon="battery_5_bar" />
+              <q-btn dense flat icon="battery_full_alt" />
             </div>
           </div>
           <div class="mainDate row justify-center items-center">
@@ -199,6 +219,12 @@ $dark-color: #1d0c0c;
     background-position: center;
     background-size: 100%;
   }
+  .bg.itemBoxs {
+    // background: inherit;
+    z-index: 1;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
 
   .header {
     .date {
@@ -216,15 +242,69 @@ $dark-color: #1d0c0c;
       margin-top: -3px;
     }
   }
-  
-  .grid {
-    display :grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-gap: 10px;
-    div {
-      border-radius: 10px;
-      width: 64px;
-      height: 64px;
+
+  .mainItem {
+    .grid {
+      display :grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-gap: 20px;
+      .item_f {
+        border-radius: 10px;
+        width: 58px;
+        height: 58x;
+        cursor: pointer;
+        &:active {
+          opacity: .7;
+        }
+      }
+      .itemBox {
+        width: 58px;
+        height: 58px;
+        background: #eee;
+
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-gap: 5px;
+        border-radius: 10px;
+        padding: 5px;
+        cursor: pointer;
+        &:active {
+          opacity: .7;
+        }
+        div {
+          border-radius: 10px;
+          width: 20px;
+          height: 20px;
+          cursor: pointer;
+        }
+      }
+      .itemBox.itemBoxs {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-gap: 10px;
+        position: absolute;
+        padding: 20px;
+        z-index: 100;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 250px;
+        height: 250px;
+        background: #eee;
+        cursor: auto;
+        &:active {
+          opacity: 1;
+        }
+        div {
+          border-radius: 10px;
+          width: 58px;
+          height: 58px;
+          cursor: pointer;
+          &:active {
+            opacity: .7;
+          }
+        }
+      }
     }
   }
   
@@ -236,10 +316,14 @@ $dark-color: #1d0c0c;
         width: 64px;
         height: 64px;
         cursor: pointer;
+        &:active {
+          opacity: .7;
+        }
       }
     }
   }
   .rightSwiper {
+    display: none;
     position: absolute;
     top: 0;
     left: 0;

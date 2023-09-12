@@ -10,11 +10,14 @@
   },
   "dependencies": {
     "@quasar/extras": "^1.16.6",
+    "@vueuse/core": "^10.4.1",
     "pinia": "^2.1.6",
     "quasar": "^2.12.5",
+    "simple-vue-camera": "^1.1.3",
     "swiper": "^8.4.7",
     "vue": "^3.3.4",
     "vue-awesome-swiper": "^5.0.1",
+    "vue-camera-lib": "^1.0.4",
     "vue-router": "^4.2.4"
   },
   "devDependencies": {
