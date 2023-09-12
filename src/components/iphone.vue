@@ -64,6 +64,10 @@ let minutes = today.getMinutes();
 let todayYear = ref((month.toString().length === 1 ? '0' + month : month) + '월' + (day.toString().length === 1 ? '0' + day : day) + '일' + dayOfWeek + '요일'  );
 let todayDate = ref((hours.toString().length === 1 ? '0' + hours : hours) + ':' + (minutes.toString().length === 1 ? '0' + minutes : minutes));
 
+const down = (data) => {
+  // 슬라이드 - css 트랜스폼 처리하잔
+  cameraActive.value = data;
+}
 
 
 setInterval(() => {
@@ -104,8 +108,6 @@ function authenticateUser(){
         // for the list of all possible error codes
     })
 }
-
-
 // watch(mode, () => {
 //   if($q.dark.isActive === false) {
 //     $q.dark.set(true)
@@ -118,7 +120,7 @@ function authenticateUser(){
   <div class="container">
     <div class="bg" :class="{ itemBoxs : itemBox }">
       <!-- top -->
-      <div style="height: 25px" class="header row justify-around">
+      <div class="header row justify-evenly">
         <!-- <div> -->
           <div class="date q-ml-lg">{{ todayDate }}</div>
         <!-- </div> -->
@@ -154,8 +156,8 @@ function authenticateUser(){
         <div class="banner shadow-5 q-pa-md row justify-between">
           <q-img :src="img.imgSrc" v-for="(img, index) in bannerImgList" :key="img" @click="(index === 3  ? cameraOpen() : none)"/>
         </div>
-        <div v-if="cameraActive"><camera /></div>
       </div>
+      <div v-if="cameraActive"><camera @down="down" :cameraActive="cameraActive" /></div>
     </div>
     <swiper class="rightSwiper" :modules="modules"  direction="vertical" simulateTouch>
       <!-- 내리는 효과 주기 위해서 첫번째 element 생략 -->
@@ -212,9 +214,10 @@ $dark-color: #1d0c0c;
 .container {
   position: relative;
   width: 400px;
+  height: 700px;
   margin: auto;
   .bg {
-    height: 100vh;
+    height: 100%;
     background-image: url('/assets/iphone_default_bg.webp');
     background-position: center;
     background-size: 100%;
@@ -227,6 +230,7 @@ $dark-color: #1d0c0c;
   }
 
   .header {
+    height: 25px;
     .date {
       font-weight: bold;
       font-size: 18px;
@@ -366,9 +370,9 @@ $dark-color: #1d0c0c;
         }
         .line {
           margin: auto;
-          margin-bottom: 5px;
+          margin-bottom: 10px;
           width: 200px;
-          height: 10px;
+          height: 5px;
           background: #eee;
           border-radius: 50px;
         }
