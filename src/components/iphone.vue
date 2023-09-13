@@ -1,37 +1,59 @@
 <script setup>
-import { ref, watch, defineAsyncComponent } from 'vue'
+import { ref, watch, defineAsyncComponent, computed } from 'vue'
 import { useQuasar } from 'quasar'
 import faceIO from '@faceio/fiojs'
 import { Swiper, SwiperSlide } from 'vue-awesome-swiper'
 import { onClickOutside } from "@vueuse/core"
 
-const camera = defineAsyncComponent(() => import('./camera.vue'))
-
-const cameraActive = ref(false)
-
-const cameraOpen = () => {
-  console.log('trues')
-  cameraActive.value = true;
-}
-
+import { useModal } from "@/stores/index.js";
 
 import 'swiper/css'
 import 'swiper/css/pagination'
 
+const store = useModal();
+
+const Line = defineAsyncComponent(() => import('./Line.vue')); 
+const Photo = defineAsyncComponent(() => import('./Photo.vue')); 
+const Camera = defineAsyncComponent(() => import('./Camera.vue'))
+
 const $q = useQuasar();
 
-const itemBox = ref(false);
-const itemBoxActive = ref();
+// const itemBox = ref(false);
+const itemBox = ref();
 
-onClickOutside(itemBoxActive, () => {
-  itemBox.value = false
+// 반응형
+const cameraActive = computed(() => store.cameraActive);
+const photoActive = computed(() => store.photoActive);
+const itemBoxActive = computed(() => store.itemBoxActive);
+
+// 문제 - 해당 박스 밖을 클릭해야 바뀐다 -> 하지만 해당 이미지 클릭시에 false를 설정 했는데 이거때문에 겹쳐서 실행 안된다?
+onClickOutside(itemBox, () => {
+  store.$patch({
+    itemBoxActive: false
+  })
+})
+
+watch(itemBoxActive, (data) => {
+  console.log('바뀜')
+  console.log(data)
 })
 
 const itemBoxOpen = () => {
-  itemBox.value = true;
+  store.itemBoxBtn();
 }
 
-const modules = ref([ ])
+const modules = ref([])
+
+
+
+const cameraOpen = () => {
+  store.cameraBtn()
+}
+
+const photoOpen = () => {
+  store.photoBtn()
+}
+
 
 const imgList = [
   { imgSrc: ('/assets/photo.png') },
@@ -64,10 +86,6 @@ let minutes = today.getMinutes();
 let todayYear = ref((month.toString().length === 1 ? '0' + month : month) + '월' + (day.toString().length === 1 ? '0' + day : day) + '일' + dayOfWeek + '요일'  );
 let todayDate = ref((hours.toString().length === 1 ? '0' + hours : hours) + ':' + (minutes.toString().length === 1 ? '0' + minutes : minutes));
 
-const down = (data) => {
-  // 슬라이드 - css 트랜스폼 처리하잔
-  cameraActive.value = data;
-}
 
 
 setInterval(() => {
@@ -141,9 +159,9 @@ function authenticateUser(){
       <div class="q-pa-md mainItem">
         <div class="q-ml-md q-mt-md grid" >
           <q-img class="item_f" src="/assets/kakaotalk.png" />
-          <div ref="itemBoxActive" :class="{ itemBoxs : itemBox }" class="itemBox" @click="itemBoxOpen">
-            <template v-if="itemBox">
-              <q-img :src="img.imgSrc" v-for="img in imgList" :key="img" />
+          <div ref="itemBox" :class="{ itemBoxs : itemBoxActive }" class="itemBox" @click="itemBoxOpen">
+            <template v-if="itemBoxActive">
+              <q-img :src="img.imgSrc" v-for="(img, index) in imgList" :key="img" @click="(index === 0  ? photoOpen() : none)" />
             </template>
             <template v-else>
               <q-img :src="img.imgSrc" v-for="img in imgList.slice(0, 4)" :key="img" />
@@ -157,8 +175,11 @@ function authenticateUser(){
           <q-img :src="img.imgSrc" v-for="(img, index) in bannerImgList" :key="img" @click="(index === 3  ? cameraOpen() : none)"/>
         </div>
       </div>
-      <div v-if="cameraActive"><camera @down="down" :cameraActive="cameraActive" /></div>
+      <div v-if="cameraActive"><Camera /></div>
+      <div v-if="photoActive"><Photo /></div>
     </div>
+
+
     <swiper class="rightSwiper" :modules="modules"  direction="vertical" simulateTouch>
       <!-- 내리는 효과 주기 위해서 첫번째 element 생략 -->
       <swiper-slide class="swiperItem">
@@ -192,7 +213,7 @@ function authenticateUser(){
             <q-btn @click="enrollNewUser" class="bottomItem" label="얼굴 인식" />
             <q-btn class="bottomItem" icon="photo_camera" />
           </div>
-          <div class="line absolute-bottom"></div>
+          <Line  />
         </div>
       </swiper-slide>
       <swiper-slide class="swiperItem"></swiper-slide>
@@ -367,14 +388,6 @@ $dark-color: #1d0c0c;
             height: 45px;
             border-radius: 50%;
           }
-        }
-        .line {
-          margin: auto;
-          margin-bottom: 10px;
-          width: 200px;
-          height: 5px;
-          background: #eee;
-          border-radius: 50px;
         }
       }
     }

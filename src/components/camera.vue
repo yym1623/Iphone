@@ -1,19 +1,18 @@
 
 <script setup>
-import { ref } from 'vue';
+import { ref, defineAsyncComponent  } from 'vue';
 import Camera from "simple-vue-camera";
 import { useQuasar } from 'quasar'
+import { Swiper, SwiperSlide } from 'vue-awesome-swiper'
+import 'swiper/css'
+import 'swiper/css/pagination'
+
+const Line = defineAsyncComponent(() => import('./Line.vue'))
+
 const $q = useQuasar();
 
-const emit = defineEmits(['down'])
 
-
-const props = defineProps({
-  cameraActive: {
-    type: Boolean,
-    default: false
-  }
-})
+const swiperList = ref([ "타임랩스", "비디오", "사진", "파노라마", "인물사진"])
 
 
 const cameras = ref();
@@ -30,24 +29,21 @@ const snapshot = async () => {
   $q.sessionStorage.set('imgList', imgList.value)
 }
 
-const downModal = () => {
-
-  // props로 가져온 데이터를 변경시켜서 그걸 보내주던가 (해당 받아온걸로 변경해야 하는거면), 그게 아니라 받아온게 아닌 단순 클릭시 해당 불리언값을 트루 펄스만 하는거면 그냥 emit으로 트루 펄스만 할당해서 보내서 써도 된다 -> 그게 해당 함수 데이터 에담긴다
-  // props.cameraActive = false;
-  emit('down', false)
-
-}
-
-
 </script>
 
 
 <template>
   <div class="camera">
-    <camera :resolution="{ width: 400, height: 300 }" ref="cameras"  autoplay />
+    <q-btn class="top__toggle" icon="expand_less"  />
+    <camera :resolution="{ width: 400, height: 300 }" ref="cameras" />
+    <swiper class="swiper" :slides-per-view="5"  simulateTouch>
+      <swiper-slide v-for="(swiper, i) in swiperList" :key="swiper" @click="swiperFocus(i)" :class="{ swiperFocus : i === 2}" class="swiperItem">{{ swiper }}</swiper-slide>
+    </swiper>
+    <!-- <div></div> -->
+    <q-btn class="image__box"  />
     <q-btn class="snapshot" @click="snapshot" />
-    <q-btn class="turn__snapshot" @click="snapshot" icon="autorenew" />
-    <div @click="downModal()" class="line absolute-bottom"></div>
+    <q-btn class="turn__snapshot" icon="autorenew" />
+    <Line />
   </div>
 </template>
 
@@ -60,6 +56,32 @@ const downModal = () => {
   width: 100%;
   height: 100%;
   background: #000;
+  .top__toggle {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 10px;
+    margin: auto;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #333;
+    color: #fff;
+  }
+  .image__box {
+    width: 50px;
+    height: 50px;
+    border-radius: 10%;
+    background: #fff;
+    position: absolute;
+    bottom: 48px;
+    left: 30px;
+    margin: auto;
+    &:active {
+      border-radius: 50%;
+      opacity: .7;
+    }
+  }
   .snapshot {
     width: 70px;
     height: 70px;
@@ -83,19 +105,25 @@ const downModal = () => {
     position: absolute;
     bottom: 50px;
     right: 30px;
+    color: #fff;
     margin: auto;
     &:active {
       border-radius: 50%;
       opacity: .7;
     }
   }
-  .line {
-    margin: auto;
-    margin-bottom: 10px;
-    width: 200px;
-    height: 5px;
-    background: #eee;
-    border-radius: 50px;
+  .swiper {
+    position: absolute;
+    bottom: 150px;
+    color: #fff;
+    width: 100%;
+    .swiperItem {
+      text-align: center;
+      cursor: pointer;
+    }
+    .swiperItem.swiperFocus {
+      color: #ffa700
+    }
   }
 }
 </style>

@@ -1,7 +1,7 @@
 <script setup>
 import { defineAsyncComponent, ref } from 'vue' 
 
-const Iphone = defineAsyncComponent(() => import('./components/iphone.vue'))
+const Iphone = defineAsyncComponent(() => import('./components/Iphone.vue'))
 
 
 </script>
