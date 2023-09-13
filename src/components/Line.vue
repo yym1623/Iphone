@@ -19,11 +19,11 @@ const downModal = () => {
 <style lang="scss" scoped>
 .line {
   position: absolute;
-    bottom: 10px;
-    margin: auto;
-    width: 200px;
-    height: 5px;
-    background: #eee;
-    border-radius: 50px;
+  bottom: 10px;
+  margin: auto;
+  width: 200px;
+  height: 5px;
+  background: #eee;
+  border-radius: 50px;
 }
 </style>

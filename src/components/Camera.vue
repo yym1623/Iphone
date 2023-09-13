@@ -13,6 +13,7 @@ const $q = useQuasar();
 
 const swiperList = ref([ "타임랩스", "비디오", "사진", "파노라마", "인물사진"])
 
+const image = ref()
 
 const cameras = ref();
 
@@ -22,6 +23,7 @@ const snapshot = async () => {
   const blob = await cameras.value.snapshot();
   const url = URL.createObjectURL(blob);
   imgList.value.unshift({ url })
+  image.value.src = url
 
   $q.sessionStorage.set('imgList', imgList.value)
 
@@ -41,8 +43,8 @@ const snapshot = async () => {
     <swiper class="swiper" :slides-per-view="5"  simulateTouch>
       <swiper-slide v-for="(swiper, i) in swiperList" :key="swiper" @click="swiperFocus(i)" :class="{ swiperFocus : i === 2}" class="swiperItem">{{ swiper }}</swiper-slide>
     </swiper>
-    <!-- <div></div> -->
     <q-btn class="image__box"  />
+    <img ref="image" alt="">
     <q-btn class="snapshot" @click="snapshot" />
     <q-btn class="turn__snapshot" icon="autorenew" />
     <Line />
@@ -52,7 +54,6 @@ const snapshot = async () => {
 <style lang="scss" scoped>
 .camera {
   position: absolute;
-  // bottom: 0;
   top: 0;
   left: 0;
   width: 100%;

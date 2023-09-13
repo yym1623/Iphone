@@ -12,18 +12,20 @@ import 'swiper/css/pagination'
 
 const store = useModal();
 
+// refs
+const itemBox = ref();
+
 const Line = defineAsyncComponent(() => import('./Line.vue')); 
 const Photo = defineAsyncComponent(() => import('./Photo.vue')); 
 const Camera = defineAsyncComponent(() => import('./Camera.vue'))
 
 const $q = useQuasar();
 
-const itemBox = ref();
-
 // 반응형
 const cameraActive = computed(() => store.cameraActive);
 const photoActive = computed(() => store.photoActive);
 const itemBoxActive = computed(() => store.itemBoxActive);
+
 
 // 문제 - 해당 박스 밖을 클릭해야 바뀐다 -> 하지만 해당 이미지 클릭시에 false를 설정 했는데 이거때문에 겹쳐서 실행 안된다?
 onClickOutside(itemBox, () => {
@@ -37,8 +39,6 @@ const itemBoxOpen = () => {
 }
 
 const modules = ref([])
-
-
 
 const cameraOpen = () => {
   store.cameraBtn()
@@ -66,7 +66,6 @@ const bannerImgList = [
   { imgSrc: ('/assets/camera.png') },
 ]
 
-
 let today = new Date(); 
 // let year = today.getFullYear();
 let month = today.getMonth() + 1;
@@ -81,12 +80,11 @@ let todayYear = ref((month.toString().length === 1 ? '0' + month : month) + '월
 let todayDate = ref((hours.toString().length === 1 ? '0' + hours : hours) + ':' + (minutes.toString().length === 1 ? '0' + minutes : minutes));
 
 
-
 setInterval(() => {
   todayDate.value
   todayYear.value
 }, 60000);
- 
+
 
 const faceio = new faceIO("fioacab4");
 // face id 신규 등록
@@ -229,7 +227,7 @@ $dark-color: #1d0c0c;
 .container {
   position: relative;
   width: 400px;
-  height: 700px;
+  height: 100vh;
   margin: auto;
   .bg {
     height: 100%;
