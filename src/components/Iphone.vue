@@ -18,7 +18,6 @@ const Camera = defineAsyncComponent(() => import('./Camera.vue'))
 
 const $q = useQuasar();
 
-// const itemBox = ref(false);
 const itemBox = ref();
 
 // 반응형
@@ -31,11 +30,6 @@ onClickOutside(itemBox, () => {
   store.$patch({
     itemBoxActive: false
   })
-})
-
-watch(itemBoxActive, (data) => {
-  console.log('바뀜')
-  console.log(data)
 })
 
 const itemBoxOpen = () => {

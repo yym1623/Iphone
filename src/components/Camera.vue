@@ -11,7 +11,6 @@ const Line = defineAsyncComponent(() => import('./Line.vue'))
 
 const $q = useQuasar();
 
-
 const swiperList = ref([ "타임랩스", "비디오", "사진", "파노라마", "인물사진"])
 
 
@@ -23,10 +22,13 @@ const snapshot = async () => {
   const blob = await cameras.value.snapshot();
   const url = URL.createObjectURL(blob);
   imgList.value.unshift({ url })
-  console.log(imgList.value)
-  // console.log(imgList.value)
 
   $q.sessionStorage.set('imgList', imgList.value)
+
+  // 찍는 효과로 쓰자 (전환 효과)
+  const devices = await cameras.value?.devices(["videoinput"]);
+  const device = devices[0];
+  cameras.value?.changeCamera(device.deviceId);
 }
 
 </script>

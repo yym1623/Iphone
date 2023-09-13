@@ -22,7 +22,7 @@ export const useModal = defineStore('Active', () => {
   }
 
   const itemBoxBtn = () => {
-    // itemBoxActive.value = true;
+    itemBoxActive.value = true;
   }
   // 다른페이지에서 클릭으로 바꾼 데이터도 해당 부모 파일에서 컴퓨티드로 가져와서 실시간 동적으로 바뀌기 때문에 적용된다
   const downBtn = () => {
